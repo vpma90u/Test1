@@ -1,0 +1,8 @@
+with open('test.sgm', 'r') as file:
+    count = 0
+    for line in file:
+        for word in line.split():
+            if (word != "<!DOCTYPE"):
+                print(word)
+                count += 1
+    print(count)
