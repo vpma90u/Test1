@@ -1,0 +1,63 @@
+# Text datasets
+from bs4 import BeautifulSoup
+import nltk
+import sklearn
+import re
+import string
+# For downloading and importing data
+import os
+import urllib
+import itertools
+import tarfile
+import nltk
+
+#Load Data
+text_data = []
+for index in range(22):
+    filename = 'reut2-000.sgm'.format(str(index).zfill(3))
+    with open(filename, 'r', encoding = 'utf-8', errors = 'ignore') as infile:
+        text_data.append(infile.read())
+
+Extract Body and html
+articles = []
+for textfile in text_data:
+    # Parse text as html using beautiful soup
+    parsed_text = BeautifulSoup(textfile, 'html.parser')
+    # Extract article between <BODY> and </BODY> and convert to standard text. Add to list of articles
+    articles += [article.get_text() for article in parsed_text.find_all('body')]
+
+#lower case, punctuation and numbers
+# Convert each article to all lower case
+articles = [article.lower() for article in articles]
+# Strip all punctuation from each article
+# This uses str.translate to map all punctuation to the empty string
+table = str.maketrans('', '', string.punctuation)
+articles = [article.translate(table) for article in articles]
+# Convert all numbers in the article to the word 'num' using regular expressions
+articles = [re.sub(r'\d+', 'num', article) for article in articles]
+# Print the first article as a running example
+print(articles[0])
+
+#Stopwords
+nltk.download('stopwords')
+# Create stopwords list, convert to a set for speed
+stopwords = set(nltk.corpus.stopwords.words('english') + ['reuter', '\x03'])
+articles = [[word for word in article.split() if word not in stopwords] for article in articles]
+
+#word root
+stemmer = nltk.stem.PorterStemmer()
+articles = [" ".join([stemmer.stem(word) for word in article]) for article in articles]
+
+#word count
+result=[i.split() for i in articles]
+result1=len([i.split() for i in articles])
+
+#word frequency
+for word in articles:
+    count = frequency.get(word,0)
+    frequency[word] = count + 1
+     
+frequency_list = frequency.keys()
+ 
+for words in frequency_list:
+    print (words, frequency[words])
